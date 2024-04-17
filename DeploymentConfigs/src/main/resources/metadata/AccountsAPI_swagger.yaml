@@ -1,0 +1,189 @@
+openapi: 3.0.1
+info:
+  title: AccountsAPI
+  description: Your Central IT group has been tasked with exposing the customer accounts
+    in a database.  As a result, you create a System API for use by the entire IT
+    organization.  This enables access to the account data for the rest of the API
+    development team in a controlled and reusable manner.  <br>You start by creating
+    the RAML 1.0 Specification to describe the Account API methods, their inputs and
+    outputs,  and the underlying types of these inputs and outputs.  You then publish
+    this specification to your company’s private Anypoint Exchange so all stakeholders
+    can review and provide feedback.
+  contact:
+    name: API Support
+    email: example@example.com
+  version: 1.0.0
+servers:
+- url: /default
+security:
+- application:
+  - read
+  - write
+tags:
+- name: Accounts
+  description: flight customer account operations
+paths:
+  /accounts:
+    get:
+      tags:
+      - Accounts
+      summary: Retrieve a collection of accounts
+      description: Retrieve a collection of accounts
+      operationId: getAccounts
+      parameters:
+      - name: user_id
+        in: header
+        description: Identifier of the person or system requesting the data
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      - name: account_type
+        in: query
+        description: Filter based upon account type
+        required: false
+        style: form
+        explode: true
+        schema:
+          $ref: '#/components/schemas/AccountType'
+      - name: account_name
+        in: query
+        description: Filter based upon the name
+        required: false
+        style: form
+        explode: true
+        schema:
+          type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Account'
+              examples:
+                AccountsExample:
+                  $ref: '#/components/examples/AccountsExample'
+    post:
+      tags:
+      - Accounts
+      summary: Create accounts
+      description: Create accounts
+      operationId: postAccounts
+      parameters:
+      - name: user_id
+        in: header
+        description: Identifier of the person or system requesting the data
+        required: true
+        style: simple
+        explode: false
+        schema:
+          type: integer
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/PostAccount'
+            examples:
+              PostAccountsExample:
+                $ref: '#/components/examples/PostAccountsExample'
+      responses:
+        '201':
+          description: Accounts created
+          content:
+            application/json:
+              example:
+                message: Accounts created
+components:
+  schemas:
+    Account:
+      type: object
+      properties:
+        id:
+          minimum: 0
+          type: integer
+        name:
+          type: string
+        type:
+          type: string
+          enum:
+          - business
+          - personal
+        address:
+          type: string
+        air_miles:
+          minimum: 0
+          type: integer
+        created_at:
+          type: string
+    AccountType:
+      type: string
+      enum:
+      - business
+      - personal
+    PostAccount:
+      type: object
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+          enum:
+          - business
+          - personal
+        address:
+          type: string
+        air_miles:
+          minimum: 0
+          type: integer
+  parameters:
+    user_id:
+      name: user_id
+      in: header
+      description: Identifier of the person or system requesting the data
+      required: true
+      style: simple
+      explode: false
+      schema:
+        type: integer
+  examples:
+    AccountsExample:
+      summary: an array of accounts
+      value:
+      - id: 1
+        name: ACME
+        type: business
+        address: 1 Main St,Los Angeles,CA,92000,USA
+        air_miles: 5000
+        created_at: '2020-09-21T12:00:00Z'
+      - id: 2
+        name: Jane Doe
+        type: personal
+        address: 1 Main St,Los Angeles,CA,92000,USA
+        air_miles: 20000
+        created_at: '2010-01-01T00:00:00Z'
+    PostAccountsExample:
+      summary: an array of accounts
+      value:
+      - name: ACME
+        type: business
+        address: 1 Main St,Los Angeles,CA,92000,USA
+        air_miles: 5000
+      - name: Jane Doe
+        type: personal
+        address: 1 Main St,Los Angeles,CA,92000,USA
+        air_miles: 20000
+  securitySchemes:
+    application:
+      type: oauth2
+      flows:
+        clientCredentials:
+          tokenUrl: http://example.com/oauth/token
+          scopes:
+            write: allows modifying resources
+            read: allows reading resources

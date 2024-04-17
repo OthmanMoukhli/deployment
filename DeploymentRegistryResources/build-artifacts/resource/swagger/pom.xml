@@ -29,7 +29,7 @@
           </dependency>
         </dependencies>
         <configuration>
-          <artifact>C:\Users\Omoukhli\IntegrationStudio\8.2.0\workspace\Deployment\DeploymentRegistryResources\build-artifacts\resource\swagger_yaml\registry-info.xml</artifact>
+          <artifact>..\..\resource\swagger_yaml\registry-info.xml</artifact>
         </configuration>
       </plugin>
     </plugins>
